@@ -67,3 +67,8 @@ void spinBackward(){
     RPOR2bits.RP4R = 19; // Pin 11
     ODCBbits.ODB3 = 1; // Pin 7
 }
+
+void idleFunction(){
+
+    return 0;
+}

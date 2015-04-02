@@ -9,5 +9,6 @@
 #define	PWM_H
 
 void initPWM();
+void idleFunction();
 
 #endif	/* PWM_H */

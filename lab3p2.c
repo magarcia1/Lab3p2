@@ -25,13 +25,15 @@ _CONFIG2( IESO_OFF & SOSCSEL_SOSC & WUTSEL_LEG & FNOSC_PRIPLL & FCKSM_CSDCMD & O
 typedef enum stateTypeEnum{
     forward,
     backward,
-    Idle
+    idle
 } stateType;
 
 
 volatile int val;
 volatile double voltage;
-volatile stateType currState = forward;
+volatile stateType temp = idle;
+volatile stateType currState = idle;
+volatile stateType prevState = backward;
 
 int main(void) {
 
@@ -51,6 +53,9 @@ int main(void) {
         delayMs(10);
 
         switch (currState){
+            case idle:
+                idleFunction(); //there is nothing inside this function yet
+                break;
             case forward:
                 spinForward();
                 break;
@@ -87,14 +92,24 @@ void _ISR _ADC1Interrupt(void){
 void _ISR _CNInterrupt(void) {
     IFS1bits.CNIF = 0;
 //    delayMs(10);
-
-    if ( _RB5 == PRESSED ){
-        if (currState == forward){
-            currState = backward;
-        }
-        else if (currState == backward){
+    
+    if(_RB5 == PRESSED){
+        if (currState == idle && prevState == backward){
             currState = forward;
+            prevState = idle;
+        }
+        else if(currState == forward && prevState == idle){
+            currState = idle;
+            prevState = forward;                   
+        }
+        else if(currState == idle && prevState == forward){
+            currState = backward;
+            prevState = idle;
+        }
+        else if (currState == backward && prevState == idle){
+            currState = idle;
+            prevState = backward;
         }
     }
-
+    
 }
