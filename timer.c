@@ -5,14 +5,8 @@
  * Created on March 23, 2015, 11:36 AM
  */
 
-#include "p24fj64ga002.h"
+#include "p24FJ64GA002.h"
 #include "timer.h"
-
-#define FCY 14745600    //Defines the Frequency Cycle (half of reg cycle)
-#define ONE_MILLISECOND 57
-#define ONE_MICROSECOND 14
-#define TIME_DELAY .01  //Time delay for PR calculation
-#define PRE_SCALAR 256  //Sets pre scalar value for the PR calculation
 
     //TODO: Create a delay for "delay" micro seconds using timer 2
     void delayUs(unsigned int delay)

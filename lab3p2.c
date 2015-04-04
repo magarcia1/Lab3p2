@@ -1,6 +1,6 @@
 /*
  * File:   Lab3p1.c
- * Author: MiguelAnguel
+ * Author: MiguelAngel
  *
  * Created on March 23, 2015, 11:36 AM
  */
@@ -22,18 +22,22 @@ _CONFIG2( IESO_OFF & SOSCSEL_SOSC & WUTSEL_LEG & FNOSC_PRIPLL & FCKSM_CSDCMD & O
 #define true 1   // define true to use with bool data type.
 #define false 0  // define false for bool data type.
 
-typedef enum stateTypeEnum{
-    forward,
-    backward,
-    idle
+typedef enum stateTypeEnum
+{
+    //TODO: Define states by name
+        forward,
+        backward,
+        idle,
+
 } stateType;
 
 
 volatile int val;
 volatile double voltage;
-volatile stateType temp = idle;
 volatile stateType currState = idle;
 volatile stateType prevState = backward;
+
+
 
 int main(void) {
 
@@ -50,11 +54,11 @@ int main(void) {
         voltage = 3.285* ((double) val)/1023;
         sprintf(v,"%.3f V",voltage);
         printStringLCD(v);
-        delayMs(10);
+        delayMs(10); // 60 fps
 
         switch (currState){
             case idle:
-                idleFunction(); //there is nothing inside this function yet
+                idleFunction();
                 break;
             case forward:
                 spinForward();
@@ -74,17 +78,15 @@ int main(void) {
 void _ISR _ADC1Interrupt(void){
     IFS0bits.AD1IF = 0;
     val = ADC1BUF0;
+    if (currState != idle ){
+        if (voltage <= 3.285 / 2.0) {
+            OC2RS = (unsigned int) (PR3 * (double) 2 * voltage / 3.285); //for right
+            OC1RS = (unsigned int) (PR3); //for left
+        } else {
+            OC2RS = (unsigned int) (PR3);
+            OC1RS = (unsigned int) (PR3 * (double) 2 * (1 - voltage / 3.285)); //for left
 
-    if ( voltage <= 3.285/2.0 )
-    {
-        OC2RS = (unsigned int) (PR3 * (double) 2 * voltage/3.285); //for right
-        OC1RS = (unsigned int) (PR3); //for left
-    }
-    else
-    {
-        OC2RS = (unsigned int) (PR3);
-        OC1RS = (unsigned int) (PR3 * (double) 2 * (1 - voltage/3.285)); //for left
-
+        }
     }
 
 }
@@ -92,15 +94,15 @@ void _ISR _ADC1Interrupt(void){
 void _ISR _CNInterrupt(void) {
     IFS1bits.CNIF = 0;
 //    delayMs(10);
-    
-    if(_RB5 == PRESSED){
+
+     if(_RB5 == PRESSED){
         if (currState == idle && prevState == backward){
             currState = forward;
             prevState = idle;
         }
         else if(currState == forward && prevState == idle){
             currState = idle;
-            prevState = forward;                   
+            prevState = forward;
         }
         else if(currState == idle && prevState == forward){
             currState = backward;
@@ -111,5 +113,4 @@ void _ISR _CNInterrupt(void) {
             prevState = backward;
         }
     }
-    
 }

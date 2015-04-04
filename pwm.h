@@ -8,7 +8,12 @@
 #ifndef PWM_H
 #define	PWM_H
 
-void initPWM();
+
+void initPWMLeft();
+void initPWMRight();
+void spinForward();
+void spinBackward();
+
 void idleFunction();
 
 #endif	/* PWM_H */

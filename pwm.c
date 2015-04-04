@@ -69,8 +69,6 @@ void spinBackward(){
 }
 
 void idleFunction(){
-
-    OC2RS = 0; //0 Volts for the right motor
-    OC1RS = 0; //0 Volts for the left motor
-
+    OC1RS = 0;
+    OC2RS = 0;
 }
